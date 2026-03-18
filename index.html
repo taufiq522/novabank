@@ -3,43 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaBank Chaos Mode</title>
+<title>NovaPay Elite</title>
 
 <style>
 body{
   margin:0;
-  font-family:sans-serif;
+  font-family:'Segoe UI',sans-serif;
   background:#0f172a;
   color:white;
-  text-align:center;
 }
 
 .container{
-  max-width:400px;
+  max-width:420px;
   margin:auto;
   padding:20px;
 }
 
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
 .card{
-  background:#1e293b;
+  background:linear-gradient(135deg,#1e293b,#334155);
   padding:20px;
-  border-radius:15px;
+  border-radius:20px;
   margin-top:15px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
 
 .balance{
-  font-size:30px;
-  margin:10px 0;
+  font-size:32px;
+  margin-top:10px;
 }
 
 button{
-  padding:10px;
   width:100%;
+  padding:12px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
+  margin-top:10px;
   background:#22c55e;
   color:white;
+  font-weight:bold;
+}
+
+input{
+  width:100%;
+  padding:10px;
   margin-top:10px;
+  border-radius:10px;
+  border:none;
 }
 
 #notif{
@@ -52,34 +67,58 @@ button{
   padding:10px 20px;
   border-radius:20px;
   display:none;
-  font-weight:bold;
+}
+
+.small{
+  font-size:12px;
+  opacity:0.6;
+}
+
+.log{
+  font-size:14px;
+  margin-top:5px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="notif">EVENT</div>
+<div id="notif"></div>
 
 <div class="container">
 
-<h2>🏦 NovaBank Chaos Mode</h2>
-<div style="font-size:12px;opacity:0.6;">Simulation Game</div>
-
-<div class="card">
-  <div>Balance</div>
-  <div class="balance" id="saldo">$50,000</div>
+<div class="header">
+  <h2>💳 NovaPay Elite</h2>
+  <div class="small">Demo Mode</div>
 </div>
 
 <div class="card">
-  <button onclick="start()">START AUTO EVENT</button>
+  <div>Balance</div>
+  <div class="balance" id="saldo">$75,000</div>
+</div>
+
+<div class="card">
+  <div>Transfer</div>
+  <input id="user" placeholder="Username">
+  <input id="amount" type="number" placeholder="Amount USD">
+  <button onclick="send()">Send Money</button>
+</div>
+
+<div class="card">
+  <div>Virtual Card</div>
+  <div>**** **** **** 8821</div>
+  <div class="small">Valid Thru 12/30</div>
+</div>
+
+<div class="card">
+  <div>Activity</div>
+  <div id="log"></div>
 </div>
 
 </div>
 
 <script>
-let saldo = 50000;
-let running = false;
+let saldo = 75000;
 
 function update(){
   document.getElementById("saldo").innerText =
@@ -89,52 +128,60 @@ function update(){
 function notif(text){
   let n = document.getElementById("notif");
   n.innerText = text;
-  n.style.display = "block";
-  setTimeout(()=> n.style.display="none",2000);
+  n.style.display="block";
+  setTimeout(()=>n.style.display="none",2000);
 }
 
-function randomEvent(){
-  let r = Math.random();
+function send(){
+  let user = document.getElementById("user").value;
+  let amount = parseFloat(document.getElementById("amount").value);
 
-  if(r < 0.25){
-    let bonus = Math.random()*3000;
-    saldo += bonus;
-    notif("💸 BONUS +$"+Math.floor(bonus));
-  }
-  else if(r < 0.5){
-    let loss = Math.random()*2000;
-    saldo -= loss;
-    notif("💀 HACKER -$"+Math.floor(loss));
-  }
-  else if(r < 0.75){
-    saldo *= 1.2;
-    notif("🚀 PROFIT BOOST x1.2");
-  }
-  else{
-    notif("⚠️ SYSTEM ERROR...");
+  if(!user || !amount){
+    alert("Isi data dulu");
+    return;
   }
 
-  if(saldo < 0) saldo = 0;
-
+  saldo -= amount;
   update();
+
+  notif("Transfer Success 💸");
+
+  let log = document.getElementById("log");
+  log.innerHTML = `<div class="log">Sent $${amount} to ${user}</div>` + log.innerHTML;
 }
 
-function start(){
-  if(running) return;
-  running = true;
-
-  notif("SYSTEM STARTED 🔥");
-
-  setInterval(()=>{
-    randomEvent();
-  }, 4000);
-}
+// auto saldo naik biar hidup
+setInterval(()=>{
+  saldo += Math.random()*200;
+  update();
+},3000);
 
 update();
 </script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
