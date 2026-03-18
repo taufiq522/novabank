@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaPay Elite</title>
+<title>NovaPay X</title>
 
 <style>
 body{
   margin:0;
   font-family:'Segoe UI',sans-serif;
-  background:#0f172a;
+  background:#0b1220;
   color:white;
 }
 
@@ -25,16 +25,26 @@ body{
   align-items:center;
 }
 
+.logo{
+  font-size:22px;
+  font-weight:bold;
+}
+
+.badge{
+  font-size:12px;
+  opacity:0.6;
+}
+
 .card{
-  background:linear-gradient(135deg,#1e293b,#334155);
+  background:linear-gradient(135deg,#1e293b,#0f172a);
   padding:20px;
   border-radius:20px;
   margin-top:15px;
-  box-shadow:0 0 20px rgba(0,0,0,0.5);
+  box-shadow:0 0 25px rgba(0,0,0,0.5);
 }
 
 .balance{
-  font-size:32px;
+  font-size:34px;
   margin-top:10px;
 }
 
@@ -44,7 +54,7 @@ button{
   border:none;
   border-radius:12px;
   margin-top:10px;
-  background:#22c55e;
+  background:linear-gradient(90deg,#22c55e,#4ade80);
   color:white;
   font-weight:bold;
 }
@@ -59,7 +69,7 @@ input{
 
 #notif{
   position:fixed;
-  top:10px;
+  top:15px;
   left:50%;
   transform:translateX(-50%);
   background:#22c55e;
@@ -69,14 +79,28 @@ input{
   display:none;
 }
 
-.small{
-  font-size:12px;
-  opacity:0.6;
+.loader{
+  display:none;
+  margin-top:10px;
+  font-size:14px;
 }
 
 .log{
   font-size:14px;
   margin-top:5px;
+}
+
+.chart{
+  height:80px;
+  background:linear-gradient(90deg,#22c55e,#4ade80);
+  border-radius:10px;
+  margin-top:10px;
+  animation:move 2s infinite alternate;
+}
+
+@keyframes move{
+  from{transform:scaleX(0.9)}
+  to{transform:scaleX(1)}
 }
 </style>
 </head>
@@ -88,26 +112,22 @@ input{
 <div class="container">
 
 <div class="header">
-  <h2>💳 NovaPay Elite</h2>
-  <div class="small">Demo Mode</div>
+  <div class="logo">💳 NovaPay X</div>
+  <div class="badge">Simulation</div>
 </div>
 
 <div class="card">
   <div>Balance</div>
-  <div class="balance" id="saldo">$75,000</div>
+  <div class="balance" id="saldo">$120,000</div>
+  <div class="chart"></div>
 </div>
 
 <div class="card">
-  <div>Transfer</div>
-  <input id="user" placeholder="Username">
+  <div>Send Payment</div>
+  <input id="user" placeholder="Email or Username">
   <input id="amount" type="number" placeholder="Amount USD">
-  <button onclick="send()">Send Money</button>
-</div>
-
-<div class="card">
-  <div>Virtual Card</div>
-  <div>**** **** **** 8821</div>
-  <div class="small">Valid Thru 12/30</div>
+  <button onclick="send()">Send Now</button>
+  <div class="loader" id="loading">⏳ Processing...</div>
 </div>
 
 <div class="card">
@@ -118,7 +138,7 @@ input{
 </div>
 
 <script>
-let saldo = 75000;
+let saldo = 120000;
 
 function update(){
   document.getElementById("saldo").innerText =
@@ -137,22 +157,27 @@ function send(){
   let amount = parseFloat(document.getElementById("amount").value);
 
   if(!user || !amount){
-    alert("Isi data dulu");
+    alert("Lengkapi data");
     return;
   }
 
-  saldo -= amount;
-  update();
+  document.getElementById("loading").style.display="block";
 
-  notif("Transfer Success 💸");
+  setTimeout(()=>{
+    saldo -= amount;
+    update();
+    notif("Payment Sent 💸");
 
-  let log = document.getElementById("log");
-  log.innerHTML = `<div class="log">Sent $${amount} to ${user}</div>` + log.innerHTML;
+    let log = document.getElementById("log");
+    log.innerHTML = `<div class="log">Sent $${amount} to ${user}</div>` + log.innerHTML;
+
+    document.getElementById("loading").style.display="none";
+  },1500);
 }
 
-// auto saldo naik biar hidup
+// auto movement
 setInterval(()=>{
-  saldo += Math.random()*200;
+  saldo += Math.random()*300;
   update();
 },3000);
 
@@ -161,33 +186,6 @@ update();
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
