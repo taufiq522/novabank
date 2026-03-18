@@ -1,170 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>NovaBank</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: white;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaBank Chaos Mode</title>
 
-    .container {
-      padding: 20px;
-    }
+<style>
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#0f172a;
+  color:white;
+  text-align:center;
+}
 
-    .card {
-      background: rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 350px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
+.container{
+  max-width:400px;
+  margin:auto;
+  padding:20px;
+}
 
-    h1 {
-      margin-bottom: 10px;
-    }
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:15px;
+  margin-top:15px;
+}
 
-    .balance {
-      font-size: 30px;
-      margin: 15px 0;
-    }
+.balance{
+  font-size:30px;
+  margin:10px 0;
+}
 
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 5px 0;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-    }
+button{
+  padding:10px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  margin-top:10px;
+}
 
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 20px;
-      background: #00c6ff;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background: #00a2cc;
-    }
-
-    .history {
-      text-align: left;
-      font-size: 14px;
-      max-height: 150px;
-      overflow-y: auto;
-    }
-  </style>
+#notif{
+  position:fixed;
+  top:10px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#22c55e;
+  color:black;
+  padding:10px 20px;
+  border-radius:20px;
+  display:none;
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
+<div id="notif">EVENT</div>
+
 <div class="container">
 
-  <h1>🏦 NovaBank</h1>
+<h2>🏦 NovaBank Chaos Mode</h2>
+<div style="font-size:12px;opacity:0.6;">Simulation Game</div>
 
-  <div class="card">
-    <h3>Saldo Anda</h3>
-    <div class="balance" id="saldo">$10,000.00</div>
+<div class="card">
+  <div>Balance</div>
+  <div class="balance" id="saldo">$50,000</div>
+</div>
 
-    <input type="number" id="customSaldo" placeholder="Atur saldo sendiri">
-    <button onclick="setSaldo()">Set Saldo</button>
-  </div>
-
-  <div class="card">
-    <h3>Transfer</h3>
-    <input type="text" id="username" placeholder="Username tujuan">
-    <input type="number" id="amount" placeholder="Jumlah ($)">
-    <button onclick="transfer()">Kirim</button>
-  </div>
-
-  <div class="card">
-    <h3>Riwayat</h3>
-    <div class="history" id="history"></div>
-  </div>
+<div class="card">
+  <button onclick="start()">START AUTO EVENT</button>
+</div>
 
 </div>
 
 <script>
-  let saldo = 10000;
+let saldo = 50000;
+let running = false;
 
-  function updateSaldo() {
-    document.getElementById("saldo").innerText = "$" + saldo.toLocaleString();
+function update(){
+  document.getElementById("saldo").innerText =
+    "$" + Math.floor(saldo).toLocaleString();
+}
+
+function notif(text){
+  let n = document.getElementById("notif");
+  n.innerText = text;
+  n.style.display = "block";
+  setTimeout(()=> n.style.display="none",2000);
+}
+
+function randomEvent(){
+  let r = Math.random();
+
+  if(r < 0.25){
+    let bonus = Math.random()*3000;
+    saldo += bonus;
+    notif("💸 BONUS +$"+Math.floor(bonus));
+  }
+  else if(r < 0.5){
+    let loss = Math.random()*2000;
+    saldo -= loss;
+    notif("💀 HACKER -$"+Math.floor(loss));
+  }
+  else if(r < 0.75){
+    saldo *= 1.2;
+    notif("🚀 PROFIT BOOST x1.2");
+  }
+  else{
+    notif("⚠️ SYSTEM ERROR...");
   }
 
-  function setSaldo() {
-    let val = document.getElementById("customSaldo").value;
-    if (val) {
-      saldo = parseFloat(val);
-      updateSaldo();
-      alert("Saldo berhasil diubah!");
-    }
-  }
+  if(saldo < 0) saldo = 0;
 
-  function transfer() {
-    let user = document.getElementById("username").value;
-    let amount = parseFloat(document.getElementById("amount").value);
+  update();
+}
 
-    if (!user || !amount) {
-      alert("Isi semua data!");
-      return;
-    }
+function start(){
+  if(running) return;
+  running = true;
 
-    if (amount > saldo) {
-      alert("Saldo tidak cukup!");
-      return;
-    }
+  notif("SYSTEM STARTED 🔥");
 
-    saldo -= amount;
-    updateSaldo();
+  setInterval(()=>{
+    randomEvent();
+  }, 4000);
+}
 
-    let log = `Transfer $${amount} ke ${user}`;
-    let history = document.getElementById("history");
-    history.innerHTML = "<div>" + log + "</div>" + history.innerHTML;
-  }
-
-  updateSaldo();
-
-  // tombol rahasia (klik 5x judul)
-  let clickCount = 0;
-  document.querySelector("h1").addEventListener("click", () => {
-    clickCount++;
-    if (clickCount >= 5) {
-      saldo += 100000;
-      updateSaldo();
-      alert("SECRET BONUS AKTIF 😈 +100000");
-      clickCount = 0;
-    }
-  });
+update();
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
